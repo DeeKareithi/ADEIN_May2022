@@ -30,9 +30,7 @@ library(flexdashboard)
 library(shiny)
 library(htmltools)
 
-```
 
-``` {r}
 
 indicators_name <- c("Preparedness",
                 "Median availability of selected generic medicines",
@@ -46,9 +44,8 @@ for (i in indicators_name) {
   indicators <- rbind.data.frame(indicators, indicator_code)
 }
 
-```
 
-```{r}
+
 mydata = data.frame(COUNTRY=character())
 for (i in indicators$ID) {
   result <- get_gho_data(
@@ -70,51 +67,20 @@ for (i in indicators$ID) {
   mydata <- full_join(mydata, xx)
 }
 
-```
 
-Experiment with Kenya, to change different country codes, check the 3 letter country code for that country, and replace the first line in the section below with it
-```{r}
-mydata_kenya = data.frame(COUNTRY="KEN")
-
-for (i in indicators$ID) {
-  result <- get_gho_data(
-    dimension = "GHO",
-    filter = list(
-      REGION = "AFR"),
-    code = i
-  )
-  if (class(result$YEAR)=="numeric") {
-    result = result %>% group_by(COUNTRY) %>% 
-      slice(which.max(YEAR)) 
-  }
-  
-  xx =  result %>% 
-    select(COUNTRY, `Display Value`)
-  colnames(xx)[2] <- i
-  k=match(i,indicators$ID)
-  label(xx[[i]]) <- indicators[k,1]
-  mydata <- full_join(mydata_kenya, xx)
-}
-
-
-```
-
-```{r}
 
 df <- mydata %>% 
   label_to_colnames() %>%
   mutate(Country = countrycode(COUNTRY,
                                origin = "iso3c",
                                destination = "country.name"),
-         COUNTRY = NULL
+         COUNTRY = "Kenya"
          )
 
 df[,1:8] <- sapply(df[,1:8],as.numeric)
 ```
 
-
-Inputs {.sidebar}
------------------------------------------------------------------------
+## Inputs {.sidebar}
 
 ```{r, echo=FALSE}
 
@@ -126,8 +92,7 @@ reactive_data <- reactive({
 })
 ```
 
-Row
------------------------------------------------------------------------ 
+## Row
 
 ```{r, echo=FALSE}
 g <- list(
